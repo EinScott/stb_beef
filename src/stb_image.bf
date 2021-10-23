@@ -109,7 +109,8 @@ namespace stb_image
 
 		static mixin STBI_REALLOC(void* ptr, var newSize)
 		{
-			Internal.Free(ptr);
+			if (ptr != null)
+				Internal.Free(ptr);
 			Internal.Malloc((int)newSize)
 		}
 

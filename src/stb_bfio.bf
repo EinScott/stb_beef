@@ -263,7 +263,7 @@ namespace stb_image
 #if !STBI_WRITE_NO_BFIO
 namespace stb_image_write
 {
-	extension stbiw
+	/*extension stbiw
 	{
 		/**
 		#if !STBI_WRITE_NO_STDIO
@@ -525,6 +525,6 @@ namespace stb_image_write
 		}
 #endif // STBI_WRITE_NO_STDIO
 		*/
-	}
+	}*/
 }
 #endif

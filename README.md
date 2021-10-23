@@ -5,6 +5,8 @@ Every file / "header" has it's own namespace ("stb_image") and the main content 
 
 For more info, see the comments at the top of each file.
 
+Original: [STB](https://github.com/nothings/stb)
+
 ## Maintaining
 At the top of each file is the commit at which the port was performed.
 Changes i deemed to be meaningful are sometimes annotated with "@PORT". Casts between number sizes i had to add are sometimes explicit when it's required, but otherwise often inferred with "(.)".

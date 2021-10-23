@@ -1,0 +1,6 @@
+FileVersion = 1
+
+[Project]
+Name = "stb_beef"
+TargetType = "BeefLib"
+StartupObject = "stb_beef.Program"

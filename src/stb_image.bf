@@ -104,7 +104,8 @@ namespace stb_image
 
 		static mixin STBI_FREE(void* ptr)
 		{
-			Internal.Free(ptr);
+			if (ptr != null)
+				Internal.Free(ptr);
 		}
 
 		static mixin STBI_REALLOC(void* ptr, var newSize)
@@ -207,7 +208,7 @@ namespace stb_image
 		static bool stbi__err_f(char8 *str)  // @PORT add an extra '_f' here to better distinguish between the mixin and function while porting
 		{
 		   stbi__g_failure_reason = str;
-		   return true;
+		   return false;
 		}
 #endif
 
@@ -385,7 +386,7 @@ namespace stb_image
 		   #if !STBI_NO_PSD
 		   if (stbi__psd_test(s))  return stbi__psd_load(s,x,y,comp,req_comp, ri, bpc);
 		   #else
-		   STBI_NOTUSED(bpc);
+		   //STBI_NOTUSED(bpc);
 		   #endif
 		   #if !STBI_NO_PIC
 		   if (stbi__pic_test(s))  return stbi__pic_load(s,x,y,comp,req_comp, ri);

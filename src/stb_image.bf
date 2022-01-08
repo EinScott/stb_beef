@@ -2130,7 +2130,7 @@ namespace stb_image
 		static bool stbi__parse_entropy_coded_data(stbi__jpeg *z)
 		{
 		   stbi__jpeg_reset(z);
-		   if (z.progressive) {
+		   if (!z.progressive) {
 		      if (z.scan_n == 1) {
 		         int32 i,j;
 		         //STBI_SIMD_ALIGN(short, data[64]);

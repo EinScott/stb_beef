@@ -1,6 +1,6 @@
-// @PORT I'm still in the process of porting this!
+/*// @PORT I'm still in the process of porting this!
 
-/*// stb_image_write - v1.16 - public domain - http://nothings.org/stb
+// stb_image_write - v1.16 - public domain - http://nothings.org/stb
 // no warranty implied; use at your own risk
 //
 // LICENSE
@@ -89,17 +89,17 @@ namespace stb_image_write
 		   while (*fmt) {
 		      switch (*fmt++) {
 		         case ' ': break;
-		         case '1': { unsigned char x = STBIW_UCHAR(va_arg(v, int));
+		         case '1': { uint8 x = STBIW_UCHAR(va_arg(v, int));
 		                     s.func(s.context,&x,1);
 		                     break; }
-		         case '2': { int x = va_arg(v,int);
-		                     unsigned char b[2];
+		         case '2': { int32 x = va_arg(v,int);
+		                     uint8[2] b;
 		                     b[0] = STBIW_UCHAR(x);
 		                     b[1] = STBIW_UCHAR(x>>8);
 		                     s.func(s.context,b,2);
 		                     break; }
 		         case '4': { stbiw_uint32 x = va_arg(v,int);
-		                     unsigned char b[4];
+		                     uint8[4] b;
 		                     b[0]=STBIW_UCHAR(x);
 		                     b[1]=STBIW_UCHAR(x>>8);
 		                     b[2]=STBIW_UCHAR(x>>16);

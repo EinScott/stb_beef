@@ -15,7 +15,6 @@ Changes i deemed to be meaningful are sometimes annotated with "@PORT". Casts be
 Please note that, while the ports in here are technically complete, errors may have occured while porting (it's usually something related to number math with differing int sizes). Most code is untested. Please report (or fix and pull) those.
 
 **Known problems**:
-- currently there seem to be some artifacts when rendering out stb_ttf fonts to bitmaps
 - stbi bigger pngs return "zlib corrupt"
 - stbi smaller pngs may have weird artifacts / shifts. Some also just work
 - stbi jpgs return "bad huffman code"

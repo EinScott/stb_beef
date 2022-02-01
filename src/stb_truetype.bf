@@ -436,9 +436,9 @@ namespace stb_truetype
 		}
 
 		[Inline]
-		static stbtt_uint16 ttUSHORT(stbtt_uint8* p) { return ((uint16)p[0]) * 256 + p[1]; }
+		static stbtt_uint16 ttUSHORT(stbtt_uint8* p) { return (uint16)((uint32)p[0]) * 256 + p[1]; }
 		[Inline]
-		static stbtt_int16 ttSHORT(stbtt_uint8* p) { return ((int16)p[0]) * 256 + p[1]; }
+		static stbtt_int16 ttSHORT(stbtt_uint8* p) { return (int16)((int32)p[0]) * 256 + p[1]; }
 		[Inline]
 		static stbtt_uint32 ttULONG(stbtt_uint8* p) { return (((uint32)p[0]) << 24) + (((uint32)p[1]) << 16) + (((uint32)p[2]) << 8) + p[3]; }
 		[Inline]
@@ -707,8 +707,8 @@ namespace stb_truetype
 
 				// they lie from endCount .. endCount + segCount
 				// but searchRange is the nearest power of two, so...
-				if (unicode_codepoint >= ttUSHORT(data + search + rangeShift * 2))
-					search += rangeShift * 2;
+				if (unicode_codepoint >= ttUSHORT(data + search + (uint32)rangeShift * 2))
+					search += (uint32)rangeShift * 2;
 
 				// now decrement to bias correctly to find smallest
 				search -= 2;
@@ -716,9 +716,9 @@ namespace stb_truetype
 				{
 					stbtt_uint16 end;
 					searchRange >>= 1;
-					end = ttUSHORT(data + search + searchRange * 2);
+					end = ttUSHORT(data + search + (uint32)searchRange * 2);
 					if (unicode_codepoint > end)
-						search += searchRange * 2;
+						search += (uint32)searchRange * 2;
 					--entrySelector;
 				}
 				search += 2;
@@ -922,7 +922,7 @@ namespace stb_truetype
 					} else {
 						if ((flags & 16) == 0)
 						{
-							x = x + (stbtt_int16)(points[0] * 256 + points[1]);
+							x = x + (stbtt_int16)((int32)points[0] * 256 + points[1]);
 							points += 2;
 						}
 					}
@@ -941,7 +941,7 @@ namespace stb_truetype
 					} else {
 						if ((flags & 32) == 0)
 						{
-							y = y + (stbtt_int16)(points[0] * 256 + points[1]);
+							y = y + (stbtt_int16)((int32)points[0] * 256 + points[1]);
 							points += 2;
 						}
 					}
@@ -987,7 +987,7 @@ namespace stb_truetype
 						}
 						stbtt_setvertex(&vertices[num_vertices++], STBTT_vmove, sx, sy, 0, 0);
 						was_off = false;
-						next_move = 1 + ttUSHORT(endPtsOfContours + j * 2);
+						next_move = 1 + (int32)ttUSHORT(endPtsOfContours + j * 2);
 						++j;
 					} else {
 						if ((flags & 1) == 0)
@@ -1248,7 +1248,7 @@ namespace stb_truetype
 				b0 = stbtt__buf_get8(&b);
 				switch (b0) {
 				// @TODO implement hinting
-				case 0x13:// hintmask
+				case 0x13: fallthrough;// hintmask
 				case 0x14:// cntrmask
 					if (in_header)
 						maskbits += (sp / 2);// implicit "vstem"
@@ -1256,9 +1256,9 @@ namespace stb_truetype
 					stbtt__buf_skip(&b, (maskbits + 7) / 8);
 					break;
 
-				case 0x01:// hstem
-				case 0x03:// vstem
-				case 0x12:// hstemhm
+				case 0x01: fallthrough;// hstem
+				case 0x03: fallthrough;// vstem
+				case 0x12: fallthrough;// hstemhm
 				case 0x17:// vstemhm
 					maskbits += (sp / 2);
 					break;
@@ -1361,7 +1361,7 @@ namespace stb_truetype
 					stbtt__csctx_rccurve_to(c, s[i], s[i + 1], s[i + 2], s[i + 3], s[i + 4], s[i + 5]);
 					break;
 
-				case 0x1A:// vvcurveto
+				case 0x1A: fallthrough;// vvcurveto
 				case 0x1B:// hhcurveto
 					if (sp < 4) return STBTT__CSERR!("(vv|hh)curveto stack");
 					f = 0.0f;
@@ -1384,6 +1384,8 @@ namespace stb_truetype
 						has_subrs = true;
 					}
 				   // FALLTHROUGH
+					fallthrough;
+
 				case 0x1D:// callgsubr
 					if (sp < 1) return STBTT__CSERR!("call(g|)subr stack");
 					v = (int32)s[--sp];
@@ -1644,7 +1646,7 @@ namespace stb_truetype
 					stbtt_uint16 glyphCount = ttUSHORT(coverageTable + 2);
 
 					// Binary search.
-					stbtt_int32 l = 0, r = glyphCount - 1, m;
+					stbtt_int32 l = 0, r = (int32)glyphCount - 1, m;
 					int32 straw, needle = glyph;
 					while (l <= r)
 					{
@@ -1671,7 +1673,7 @@ namespace stb_truetype
 					stbtt_uint8* rangeArray = coverageTable + 4;
 
 					// Binary search.
-					stbtt_int32 l = 0, r = rangeCount - 1, m;
+					stbtt_int32 l = 0, r = (int32)rangeCount - 1, m;
 					int32 strawStart, strawEnd, needle = glyph;
 					while (l <= r)
 					{
@@ -1687,7 +1689,7 @@ namespace stb_truetype
 						else
 						{
 							stbtt_uint16 startCoverageIndex = ttUSHORT(rangeRecord + 4);
-							return startCoverageIndex + glyph - strawStart;
+							return (int32)startCoverageIndex + glyph - strawStart;
 						}
 					}
 					break;
@@ -1710,7 +1712,7 @@ namespace stb_truetype
 					stbtt_uint16 glyphCount = ttUSHORT(classDefTable + 4);
 					stbtt_uint8* classDef1ValueArray = classDefTable + 6;
 
-					if (glyph >= startGlyphID && glyph < startGlyphID + glyphCount)
+					if (glyph >= startGlyphID && glyph < (int32)startGlyphID + glyphCount)
 						return (stbtt_int32)ttUSHORT(classDef1ValueArray + 2 * (glyph - startGlyphID));
 					break;
 				}
@@ -1721,7 +1723,7 @@ namespace stb_truetype
 					stbtt_uint8* classRangeRecords = classDefTable + 4;
 
 					// Binary search.
-					stbtt_int32 l = 0, r = classRangeCount - 1, m;
+					stbtt_int32 l = 0, r = (int32)classRangeCount - 1, m;
 					int32 strawStart, strawEnd, needle = glyph;
 					while (l <= r)
 					{
@@ -1770,7 +1772,7 @@ namespace stb_truetype
 			lookupList = data + lookupListOffset;
 			lookupCount = ttUSHORT(lookupList);
 
-			for (i = 0; i < lookupCount; ++i)
+			for (i = 0; i < (int32)lookupCount; ++i)
 			{
 				stbtt_uint16 lookupOffset = ttUSHORT(lookupList + 2 + 2 * i);
 				stbtt_uint8* lookupTable = lookupList + lookupOffset;
@@ -1781,7 +1783,7 @@ namespace stb_truetype
 				if (lookupType != 2)// Pair Adjustment Positioning Subtable
 					continue;
 
-				for (sti = 0; sti < subTableCount; sti++)
+				for (sti = 0; sti < (int32)subTableCount; sti++)
 				{
 					stbtt_uint16 subtableOffset = ttUSHORT(subTableOffsets + 2 * sti);
 					stbtt_uint8* table = lookupTable + subtableOffset;
@@ -1809,7 +1811,7 @@ namespace stb_truetype
 								if (coverageIndex >= pairSetCount) return 0;
 
 								needle = glyph2;
-								r = pairValueCount - 1;
+								r = (int32)pairValueCount - 1;
 								l = 0;
 
 							   // Binary search.
@@ -2083,7 +2085,6 @@ namespace stb_truetype
 			public int32 invert;
 		}
 
-
 		struct stbtt__active_edge
 		{
 			public stbtt__active_edge* next;
@@ -2174,21 +2175,21 @@ namespace stb_truetype
 					 if (i < len && j >= 0) {
 						if (i == j) {
 						   // x0,x1 are the same pixel, so compute combined coverage
-						   scanline[i] = scanline[i] + (stbtt_uint8) ((x1 - x0) * max_weight >> STBTT_FIXSHIFT);
+						   scanline[i] = (.)((int32)scanline[i] + (stbtt_uint8) ((x1 - x0) * max_weight >> STBTT_FIXSHIFT));
 						} else {
 						   if (i >= 0) // add antialiasing for x0
-							  scanline[i] = scanline[i] + (stbtt_uint8) (((STBTT_FIX - (x0 & STBTT_FIXMASK)) * max_weight) >> STBTT_FIXSHIFT);
+							  scanline[i] = (.)((int32)scanline[i] + (stbtt_uint8) (((STBTT_FIX - (x0 & STBTT_FIXMASK)) * max_weight) >> STBTT_FIXSHIFT));
 						   else
 							  i = -1; // clip
 
 						   if (j < len) // add antialiasing for x1
-							  scanline[j] = scanline[j] + (stbtt_uint8) (((x1 & STBTT_FIXMASK) * max_weight) >> STBTT_FIXSHIFT);
+							  scanline[j] = (.)((int32)scanline[j] + (stbtt_uint8) (((x1 & STBTT_FIXMASK) * max_weight) >> STBTT_FIXSHIFT));
 						   else
 							  j = len; // clip
 
 							++i;
 						   for (; i < j; ++i) // fill pixels between x0 and x1
-							  scanline[i] = scanline[i] + (stbtt_uint8) max_weight;
+							  scanline[i] = (.)((int32)scanline[i] + (stbtt_uint8) max_weight);
 						}
 					 }
 				  }
@@ -2230,7 +2231,7 @@ namespace stb_truetype
 					 stbtt__active_edge * z = *step;
 					 if (z.ey <= scan_y) {
 						*step = z.next; // delete from list
-						STBTT_assert!(z.direction);
+						STBTT_assert!(z.direction != 0);
 						z.direction = 0;
 						stbtt__hheap_free(&hh, z);
 					 } else {
@@ -3205,10 +3206,10 @@ namespace stb_truetype
 			q.x1 = round_x + b.x1 - b.x0 + d3d_bias;
 			q.y1 = round_y + b.y1 - b.y0 + d3d_bias;
 
-			q.s0 = b.x0 * ipw;
-			q.t0 = b.y0 * iph;
-			q.s1 = b.x1 * ipw;
-			q.t1 = b.y1 * iph;
+			q.s0 = (float)b.x0 * ipw;
+			q.t0 = (float)b.y0 * iph;
+			q.s1 = (float)b.x1 * ipw;
+			q.t1 = (float)b.y1 * iph;
 
 			*xpos += b.xadvance;
 		}
@@ -3369,7 +3370,7 @@ namespace stb_truetype
 				case 2:
 					for (i = 0; i <= safe_w; ++i)
 					{
-						total += pixels[i] - buffer[i & STBTT__OVER_MASK];
+						total += (uint32)pixels[i] - buffer[i & STBTT__OVER_MASK];
 						buffer[(i + (.)kernel_width) & STBTT__OVER_MASK] = pixels[i];
 						pixels[i] = (uint8)(total / 2);
 					}
@@ -3377,7 +3378,7 @@ namespace stb_truetype
 				case 3:
 					for (i = 0; i <= safe_w; ++i)
 					{
-						total += pixels[i] - buffer[i & STBTT__OVER_MASK];
+						total += (uint32)pixels[i] - buffer[i & STBTT__OVER_MASK];
 						buffer[(i + (.)kernel_width) & STBTT__OVER_MASK] = pixels[i];
 						pixels[i] = (uint8)(total / 3);
 					}
@@ -3385,7 +3386,7 @@ namespace stb_truetype
 				case 4:
 					for (i = 0; i <= safe_w; ++i)
 					{
-						total += pixels[i] - buffer[i & STBTT__OVER_MASK];
+						total += (uint32)pixels[i] - buffer[i & STBTT__OVER_MASK];
 						buffer[(i + (.)kernel_width) & STBTT__OVER_MASK] = pixels[i];
 						pixels[i] = (uint8)(total / 4);
 					}
@@ -3393,7 +3394,7 @@ namespace stb_truetype
 				case 5:
 					for (i = 0; i <= safe_w; ++i)
 					{
-						total += pixels[i] - buffer[i & STBTT__OVER_MASK];
+						total += (uint32)pixels[i] - buffer[i & STBTT__OVER_MASK];
 						buffer[(i + (.)kernel_width) & STBTT__OVER_MASK] = pixels[i];
 						pixels[i] = (uint8)(total / 5);
 					}
@@ -3401,7 +3402,7 @@ namespace stb_truetype
 				default:
 					for (i = 0; i <= safe_w; ++i)
 					{
-						total += pixels[i] - buffer[i & STBTT__OVER_MASK];
+						total += (uint32)pixels[i] - buffer[i & STBTT__OVER_MASK];
 						buffer[(i + (.)kernel_width) & STBTT__OVER_MASK] = pixels[i];
 						pixels[i] = (uint8)(total / kernel_width);
 					}
@@ -3439,7 +3440,7 @@ namespace stb_truetype
 				case 2:
 					for (i = 0; i <= safe_h; ++i)
 					{
-						total += pixels[i * stride_in_bytes] - buffer[i & STBTT__OVER_MASK];
+						total += (uint32)pixels[i * stride_in_bytes] - buffer[i & STBTT__OVER_MASK];
 						buffer[(i + (.)kernel_width) & STBTT__OVER_MASK] = pixels[i * stride_in_bytes];
 						pixels[i * stride_in_bytes] = (uint8)(total / 2);
 					}
@@ -3447,7 +3448,7 @@ namespace stb_truetype
 				case 3:
 					for (i = 0; i <= safe_h; ++i)
 					{
-						total += pixels[i * stride_in_bytes] - buffer[i & STBTT__OVER_MASK];
+						total += (uint32)pixels[i * stride_in_bytes] - buffer[i & STBTT__OVER_MASK];
 						buffer[(i + (.)kernel_width) & STBTT__OVER_MASK] = pixels[i * stride_in_bytes];
 						pixels[i * stride_in_bytes] = (uint8)(total / 3);
 					}
@@ -3455,7 +3456,7 @@ namespace stb_truetype
 				case 4:
 					for (i = 0; i <= safe_h; ++i)
 					{
-						total += pixels[i * stride_in_bytes] - buffer[i & STBTT__OVER_MASK];
+						total += (uint32)pixels[i * stride_in_bytes] - buffer[i & STBTT__OVER_MASK];
 						buffer[(i + (.)kernel_width) & STBTT__OVER_MASK] = pixels[i * stride_in_bytes];
 						pixels[i * stride_in_bytes] = (uint8)(total / 4);
 					}
@@ -3463,7 +3464,7 @@ namespace stb_truetype
 				case 5:
 					for (i = 0; i <= safe_h; ++i)
 					{
-						total += pixels[i * stride_in_bytes] - buffer[i & STBTT__OVER_MASK];
+						total += (uint32)pixels[i * stride_in_bytes] - buffer[i & STBTT__OVER_MASK];
 						buffer[(i + (.)kernel_width) & STBTT__OVER_MASK] = pixels[i * stride_in_bytes];
 						pixels[i * stride_in_bytes] = (uint8)(total / 5);
 					}
@@ -3471,7 +3472,7 @@ namespace stb_truetype
 				default:
 					for (i = 0; i <= safe_h; ++i)
 					{
-						total += pixels[i * stride_in_bytes] - buffer[i & STBTT__OVER_MASK];
+						total += (uint32)pixels[i * stride_in_bytes] - buffer[i & STBTT__OVER_MASK];
 						buffer[(i + (.)kernel_width) & STBTT__OVER_MASK] = pixels[i * stride_in_bytes];
 						pixels[i * stride_in_bytes] = (uint8)(total / kernel_width);
 					}
@@ -4148,7 +4149,7 @@ namespace stb_truetype
 						}
 						if (winding == 0)
 							min_dist = -min_dist;// if outside the shape, value is negative
-						val = onedge_value + pixel_dist_scale * min_dist;
+						val = (int32)onedge_value + pixel_dist_scale * min_dist;
 						if (val < 0)
 							val = 0;
 						else if (val > 255)

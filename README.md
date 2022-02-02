@@ -15,10 +15,4 @@ Changes i deemed to be meaningful are sometimes annotated with "@PORT". Casts be
 Please note that, while the ports in here are technically complete, errors may have occured while porting (it's usually something related to number math with differing int sizes). Most code is untested. Please report (or fix and pull) those.
 
 **Known problems**:
-- stbi bigger pngs return "zlib corrupt"
-- stbi smaller pngs may have weird artifacts / shifts. Some also just work
-- stbi jpgs return "bad huffman code"
-
-**Untested**:
-- other stbi formats than PNG & JPG
-- less common stbtt functionality (what you don't typically use for bitmap baking / displaying)
+- stbi jpgs don't load correctly

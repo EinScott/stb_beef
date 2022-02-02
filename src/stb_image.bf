@@ -12,6 +12,7 @@
 #define STBI_NO_SIMD
 
 using System;
+using System.Diagnostics;
 
 namespace stb_image
 {
@@ -108,16 +109,20 @@ namespace stb_image
 				Internal.Free(ptr);
 		}
 
-		static mixin STBI_REALLOC(void* ptr, var newSize)
+		/*static mixin STBI_REALLOC(void* ptr, var newSize)
 		{
 			if (ptr != null)
 				Internal.Free(ptr);
-			Internal.Malloc((int)newSize)
-		}
+			Internal.Malloc((int)newSize);
+		}*/
 
 		static mixin STBI_REALLOC_SIZED(void* ptr, var oldSize, var newSize)
 		{
-			STBI_REALLOC!(ptr, newSize)
+			let newPtr = Internal.Malloc((int)newSize);
+			Internal.MemCpy(newPtr, ptr, newSize > oldSize ? oldSize : newSize);
+			if (ptr != null)
+				Internal.Free(ptr);
+			newPtr
 		}
 
 #if BF_64_BIT

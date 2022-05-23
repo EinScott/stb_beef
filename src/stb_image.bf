@@ -42,7 +42,7 @@ namespace stb_image
 		typealias stbi_uc = uint8;
 		typealias stbi_us = uint16;
 
-		struct stbi_io_callbacks
+		private struct stbi_io_callbacks
 		{
 			public function int32(void* user, uint8* data, int32 size) read;// fill 'data' with 'size' bytes.  return number of bytes actually read
 			public function void(void* user, int32 n) skip;// skip the next 'n' bytes, or 'unget' the last -n bytes if negative
@@ -697,7 +697,7 @@ namespace stb_image
 		      *s.img_buffer = 0;
 		   } else {
 		      s.img_buffer = &s.buffer_start[0];
-		      s.img_buffer_end = &s.buffer_start[n];
+		      s.img_buffer_end = &s.buffer_start[[Unchecked]n]; // @PORT: get pointer of end, out of bounds
 		   }
 		}
 

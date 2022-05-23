@@ -42,7 +42,7 @@ namespace stb_image
 		typealias stbi_uc = uint8;
 		typealias stbi_us = uint16;
 
-		private struct stbi_io_callbacks
+		public struct stbi_io_callbacks
 		{
 			public function int32(void* user, uint8* data, int32 size) read;// fill 'data' with 'size' bytes.  return number of bytes actually read
 			public function void(void* user, int32 n) skip;// skip the next 'n' bytes, or 'unget' the last -n bytes if negative
